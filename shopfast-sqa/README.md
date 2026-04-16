@@ -1,7 +1,3 @@
-# Repositório ShopFast - Qualidade e Governança
-
-Este repositório demonstra a aplicação de princípios de Qualidade de Software e Governança para a plataforma ShopFast, visando prevenir falhas críticas como a ocorrida na última Black Friday.
-
 ## A: Política do Quality Gate (Regra de Enforcement) - Baseada na IEEE 730
 
 Para garantir a integridade e a confiabilidade do software, estabelecemos as seguintes regras imutáveis de Quality Gate, que devem ser aplicadas antes de qualquer deploy em ambiente de produção. Estas regras visam bloquear a entrada de código que não atenda aos padrões mínimos de testabilidade e separação de responsabilidades, conforme a norma IEEE 730 para Planos de Garantia da Qualidade de Software [1].
