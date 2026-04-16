@@ -1,0 +1,19 @@
+# Repositório ShopFast - Qualidade e Governança
+
+Este repositório demonstra a aplicação de princípios de Qualidade de Software e Governança para a plataforma ShopFast, visando prevenir falhas críticas como a ocorrida na última Black Friday.
+
+## A: Política do Quality Gate (Regra de Enforcement) - Baseada na IEEE 730
+
+Para garantir a integridade e a confiabilidade do software, estabelecemos as seguintes regras imutáveis de Quality Gate, que devem ser aplicadas antes de qualquer deploy em ambiente de produção. Estas regras visam bloquear a entrada de código que não atenda aos padrões mínimos de testabilidade e separação de responsabilidades, conforme a norma IEEE 730 para Planos de Garantia da Qualidade de Software [1].
+
+### Regras Imutáveis:
+
+1.  **Isolamento de Dependências Externas (Injeção de Dependência Obrigatória):** Todo e qualquer módulo ou função que interaja com serviços externos (e.g., APIs HTTP, Bancos de Dados, serviços de e-mail, gateways de pagamento) DEVE receber essas dependências via Injeção de Dependência (construtor, método ou propriedade). É proibido o uso de chamadas diretas a módulos globais ou importações estáticas de serviços externos dentro da lógica de negócio principal. Esta regra será verificada por ferramentas de análise estática de código (SAST) que identificarão chamadas diretas a `fetch`, `db.query`, `db.update`, `enviarEmail`, `processarPagamento` ou equivalentes dentro de funções de domínio sem que estas sejam injetadas. Falha nesta verificação resultará em bloqueio automático do merge request.
+
+2.  **Cobertura de Testes Unitários Mínima para Lógica de Negócio Crítica (80%):** Funções e módulos que implementam lógica de negócio crítica (e.g., cálculo de preços, processamento de pedidos, validação de cupons, gestão de estoque) DEVEM possuir cobertura de testes unitários de no mínimo 80%. Esta métrica será aferida por ferramentas de cobertura de código (e.g., Istanbul, Jest Coverage) no pipeline de CI/CD. Os testes unitários devem ser executados em ambiente isolado, utilizando mocks e stubs para todas as dependências externas. Merge requests que não atingirem este limiar de cobertura serão automaticamente rejeitadas. A definição de "lógica de negócio crítica" será mantida em um registro centralizado e revisada trimestralmente pela equipe de SQA.
+
+## B: Sumário Executivo (Gestão de Risco)
+
+O incidente da Black Friday na ShopFast, que resultou no despacho de milhares de iPhones não pagos, é classificado como um **erro logístico de alto impacto e alta probabilidade** em nossa Matriz de Probabilidade × Impacto. A falha primária residiu na ausência de validação cruzada entre o cupom aplicado e o saldo efetivo do cartão, permitindo que transações com "saldo zerado" fossem aprovadas logicamente, mas não financeiramente. Este cenário expôs uma lacuna crítica na **Adequação Funcional** (ISO 25010) [2] e elevou drasticamente nosso **Change Failure Rate (DORA)** [3].
+
+A atuação do SQA, conforme documentado nesta política, visa mitigar este risco através de uma abordagem preventiva e automatizada. As regras de Quality Gate, ao forçar a injeção de dependências e garantir uma cobertura robusta de testes unitários para a lógica de negócio crítica, impedem que código acoplado e não testável chegue à produção. Isso assegura que as validações essenciais, como a do saldo do cartão em conjunto com o cupom, sejam exaustivamente testadas em isolamento, antes da integração. Consequentemente, o **Change Failure Rate** é reduzido, pois a probabilidade de introduzir defeitos em produção diminui significativamente, e a qualidade do software é garantida desde as etapas iniciais do desenvolvimento.
